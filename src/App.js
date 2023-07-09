@@ -1,24 +1,73 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+const files = {
+  title: "node_modules",
+  children: [
+    {
+      title: "lodash",
+      children: [{ title: "Map" }, { title: "isEmpty" }],
+    },
+
+    {
+      title: "MUI",
+      children: [
+        { title: "Button" },
+        {
+          title: "Table",
+          children: [
+            {
+              title: "Cell",
+              children: [{ title: "Cell1" }, { title: "Cell2" }],
+            },
+            { title: "Row" },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+function ChildrenComponent({ Child }) {
+  const [display, setDisplay] = useState(false);
+
+  const nestedChildren = (Child.children || []).map((Child) => {
+    return <ChildrenComponent Child={Child} type="child" />;
+  });
+
+  return (
+    <div className="child-div">
+      {Child.children ? (
+        <button
+          className="btn"
+          onClick={() => setDisplay(!display)}
+          key={crypto.randomUUID}
+        >
+          {Child.title}
+        </button>
+      ) : (
+        <p> {Child.title}</p>
+      )}
+      <div style={{ display: display ? "block" : "none" }}>
+        {nestedChildren}
+      </div>
+    </div>
+  );
+}
 
 function App() {
+  const [display, setDisplay] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <button className=" parent-btn btn " onClick={() => setDisplay(!display)}>
+        {files.title}
+      </button>
+      <div style={{ display: display ? "block" : "none" }}>
+        {files?.children?.map((Child, idx) => {
+          return <ChildrenComponent key={idx} Child={Child} />;
+        })}
+      </div>
+    </>
   );
 }
 
